@@ -1,3 +1,4 @@
+# Recriando o arquivo após reset do ambiente
 
 class BSTNode:
     def __init__(self, key, value):
@@ -14,7 +15,7 @@ class BSTNode:
             if self.right: self.right.insert(key, value)
             else: self.right = BSTNode(key, value)
         else:
-            self.value = value  # update if already exists
+            self.value = value
 
     def find(self, key):
         if key == self.key:
@@ -43,18 +44,24 @@ class HashTable:
             mult += 1
         return hash_value % self.size
 
-    def insert(self, key, value):
+    def put(self, key, value):
         idx = self.hash(key)
         if self.table[idx] is None:
             self.table[idx] = BSTNode(key, value)
         else:
             self.table[idx].insert(key, value)
 
-    def find(self, key):
+    def get(self, key):
         idx = self.hash(key)
         if self.table[idx] is None:
             return None
         return self.table[idx].find(key)
+
+    def insert(self, key, value):
+        self.put(key, value)
+
+    def find(self, key):
+        return self.get(key)
 
     def print_table(self):
         for node in self.table:
@@ -63,7 +70,7 @@ class HashTable:
 receitas_table = HashTable()
 itens_table = HashTable()
 
-with open("craft.txt", encoding="utf-8") as f:
+with open("craft.txt", encoding='utf-8') as f:
     lines = [line.strip() for line in f if line.strip()]
 
 i = 0
@@ -76,12 +83,12 @@ while i < len(lines):
         ingredientes.append((item, int(qtde)))
         i += 1
 
-    receitas_table.insert(receita, ingredientes)
+    receitas_table.put(receita, ingredientes)
 
     for item, _ in ingredientes:
-        lst = itens_table.find(item)
+        lst = itens_table.get(item)
         if lst is None:
-            itens_table.insert(item, [receita])
+            itens_table.put(item, [receita])
         else:
             if receita not in lst:
                 lst.append(receita)
@@ -93,7 +100,7 @@ while True:
             break
         elif cmd.startswith("r "):
             nome = cmd[2:]
-            resultado = receitas_table.find(nome)
+            resultado = receitas_table.get(nome)
             print(nome)
             if resultado:
                 for item, qtde in resultado:
@@ -102,7 +109,7 @@ while True:
                 print("Não encontrado.")
         elif cmd.startswith("i "):
             nome = cmd[2:]
-            resultado = itens_table.find(nome)
+            resultado = itens_table.get(nome)
             print(nome)
             if resultado:
                 for receita in resultado:
