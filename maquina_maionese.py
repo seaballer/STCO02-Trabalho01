@@ -73,7 +73,7 @@ class HashTable:
 
         print(key)
         if node is None:
-            print("Não encontrado.")
+            print("Não encontrado")
         else:
             for ingr, qty in node.value:
                 print(f"{ingr} {qty}")
