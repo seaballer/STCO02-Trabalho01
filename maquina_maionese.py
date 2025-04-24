@@ -50,7 +50,7 @@ class Tree:
     def __str__(self):
         return node_to_string(self.root)
 
-class HashTable:
+class HashTableReceita:
     def __init__(self, size=29):
         self.size = size
         self.slots = [Tree() for _ in range(size)]
@@ -67,7 +67,7 @@ class HashTable:
         hv = self.hash(key) % self.size
         self.slots[hv].insert(key, value)
     
-    def get_recipe(self, key):
+    def get(self, key):
         hv = self.hash(key) % self.size
         node = self.slots[hv].search(key)
 
@@ -78,7 +78,18 @@ class HashTable:
             for ingr, qty in node.value:
                 print(f"{ingr} {qty}")
 
-    def get_item(self, key):
+    def print_all(self):
+        for tree in self.slots:
+            if tree.root is not None:
+                print(tree)
+            else:
+                print('None')
+
+class HashTableItens(HashTableReceita):
+    def __init__(self, size=29):
+        super().__init__(size)
+
+    def get(self, key):
         print(key)
         hv = self.hash(key) % self.size
         node = self.slots[hv].search(key)
@@ -87,14 +98,6 @@ class HashTable:
         else:
             for recipe in node.value:
                 print(recipe)
-
-
-    def print_all(self):
-        for tree in self.slots:
-            if tree.root is not None:
-                print(tree)
-            else:
-                print('None')
 
 def load_recipes_from_file(filename, recipes_ht, items_ht):
 
@@ -145,8 +148,8 @@ def load_recipes_from_file(filename, recipes_ht, items_ht):
         i += 1
 
 def main():
-    recipes = HashTable()
-    items = HashTable()
+    recipes = HashTableReceita()
+    items = HashTableItens()
 
     load_recipes_from_file("./craft.txt", recipes, items)
 
@@ -182,14 +185,14 @@ def main():
                 print("Receita não especificada. Use: r <nome_da_receita>") 
                 continue
             recipe_name = parts[1]
-            recipes.get_recipe(recipe_name)
+            recipes.get(recipe_name)
 
         elif cmd == 'i':
             if len(parts) < 2:
                 print("Item não especificado. Use: i <nome_do_item>")
                 continue
             item_name = parts[1]
-            items.get_item(item_name)
+            items.get(item_name)
 
         else:
             print("Comando inválido. Use:")
